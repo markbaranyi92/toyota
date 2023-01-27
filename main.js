@@ -1,7 +1,7 @@
+import dotenv from 'dotenv';
+dotenv.config('/.env');
 import { request } from "https";
 import fetch from 'node-fetch';
-import * as dotenv from 'dotenv';
-dotenv.config();
 
 const trip_param = {
     today: "0",
@@ -11,8 +11,8 @@ const trip_param = {
 };
 
 const body_authenticate = {
-    "username" : process.env.username,
-    "password" : process.env.password
+    "username" : process.env.my_username,
+    "password" : process.env.my_password
 }
 const my_vin = "SB1Z93BE10E261393";
 

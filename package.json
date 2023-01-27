@@ -1,0 +1,21 @@
+{
+  "name": "toyota_trips",
+  "version": "1.0.0",
+  "description": "Toyota trip info collector to calculate fuel consumption, overall distance and consumption.",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "keywords": [
+    "toyota",
+    "trip",
+    "fuel"
+  ],
+  "author": "Mark B-T",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "node-fetch": "^3.3.0"
+  }
+}
