@@ -16,8 +16,6 @@ const body_authenticate = {
 }
 const my_vin = "SB1Z93BE10E261393";
 
-console.log(body_authenticate);
-
 const post_authenticate = async (data) => {
     const url_authenticate = "https://ssoms.toyota-europe.com/authenticate";
     const options_authenticate = {
