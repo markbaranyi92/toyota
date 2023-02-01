@@ -16,6 +16,15 @@ const body_authenticate = {
 }
 const my_vin = "SB1Z93BE10E261393";
 
+var uuid = "";
+var token = "";
+var resp_auth = {};
+var promise_auth;
+const tripIds = [];
+var promise_trip_list;
+const trip_infos = [];
+const promises_trip = [];
+
 const post_authenticate = async (data) => {
     const url_authenticate = "https://ssoms.toyota-europe.com/authenticate";
     const options_authenticate = {
@@ -60,29 +69,15 @@ const post_authenticate = async (data) => {
 
 };
 
-var uuid = "";
-var token = "";
-var vin = "";
-var resp_auth = {};
-
-const getres_auth = async () => { 
+const getres_auth = async (auth_data) => { 
     try {
-        const result = await post_authenticate(body_authenticate);
+        const result = await post_authenticate(auth_data);
         return result;
       } catch(error) {
         // handle error
       }
 
 };
-
-const promise_auth = getres_auth().then(value =>{
-    resp_auth = JSON.parse(value);
-    uuid = resp_auth.customerProfile.uuid;
-    token = resp_auth.token;
-    console.log(resp_auth);
-    console.log(uuid);
-    console.log(token);
-});
 
 const get_trip_list = async (param) => {
     try
@@ -108,20 +103,10 @@ const get_trip_list = async (param) => {
     }
 }
 
-const tripIds = [];
-
-const promise_trip_list = get_trip_list(trip_param.last_week).then((data) => {
-    //console.log(data);
-    data.recentTrips.forEach(obj => {
-        tripIds.push(obj.tripId);
-    });
-});
-
-await Promise.all([promise_trip_list]);
-
 const get_one_trip = async (tripId) => {
     try
     {
+        await Promise.all([promise_trip_list]);
         const res = await fetch("https://cpb2cs.toyota-europe.com/api/user/"+uuid+"/cms/trips/v2/"+tripId+"/events/vin/"+my_vin, {
             method: "GET",
             headers: {
@@ -140,29 +125,57 @@ const get_one_trip = async (tripId) => {
     }
 }
 
-const trip_infos = [];
-const promises_trip = [];
-tripIds.forEach(tripId => {
-    promises_trip.push(get_one_trip(tripId).then((data) =>{
-        trip_infos[tripId] = data.statistics;
-    }));
-});
+const waitForTrips = async () =>{
+    await Promise.all(promises_trip);
+}
 
-await Promise.all(promises_trip);
-console.log(trip_infos);
-//end of collect data
 
-var averageFuelConsumption = 0.0;
-var overallFuelConsumption = 0.0;
-var totalDistanceInKm = 0.0;
-Object.values(trip_infos).forEach(info => {
-    totalDistanceInKm += info.totalDistanceInKm;
-    averageFuelConsumption += info.averageFuelConsumptionInL*info.totalDistanceInKm;
-    overallFuelConsumption += info.fuelConsumptionInL;
-})
-averageFuelConsumption = averageFuelConsumption/totalDistanceInKm;
+export const Toyota_data = {
+    collect: (body) => {
+        const dataAuth =
+        {
+            "username": body.username,
+            "password": body.password
+        }
+        promise_auth = getres_auth(dataAuth).then(value =>{
+            resp_auth = JSON.parse(value);
+            uuid = resp_auth.customerProfile.uuid;
+            token = resp_auth.token;
+            console.log(resp_auth);
+            console.log(uuid);
+            console.log(token);
+        });
+        promise_trip_list = get_trip_list(body.time_param).then((data) => {
+            //console.log(data);
+            data.recentTrips.forEach(obj => {
+                tripIds.push(obj.tripId);
+            });
+        });
+        tripIds.forEach(tripId => {
+            promises_trip.push(get_one_trip(tripId).then((data) =>{
+                trip_infos[tripId] = data.statistics;
+            }));
+        });
+        waitForTrips();
+        console.log(trip_infos);
+        //end of collect data
 
-const varToString = varObj => Object.keys(varObj)[0]
-console.log(varToString({totalDistanceInKm}) + ": " + totalDistanceInKm + " km");
-console.log(varToString({averageFuelConsumption}) + ": " + averageFuelConsumption + " l/100km");
-console.log(varToString({overallFuelConsumption}) + ": " + overallFuelConsumption + " l");
+        var averageFuelConsumption = 0.0;
+        var overallFuelConsumption = 0.0;
+        var totalDistanceInKm = 0.0;
+        Object.values(trip_infos).forEach(info => {
+            totalDistanceInKm += info.totalDistanceInKm;
+            averageFuelConsumption += info.averageFuelConsumptionInL*info.totalDistanceInKm;
+            overallFuelConsumption += info.fuelConsumptionInL;
+        })
+        averageFuelConsumption = averageFuelConsumption/totalDistanceInKm;
+
+        const varToString = varObj => Object.keys(varObj)[0]
+        console.log(varToString({totalDistanceInKm}) + ": " + totalDistanceInKm + " km");
+        console.log(varToString({averageFuelConsumption}) + ": " + averageFuelConsumption + " l/100km");
+        console.log(varToString({overallFuelConsumption}) + ": " + overallFuelConsumption + " l");
+        return body_authenticate;
+    },
+};
+
+export default Toyota_data;

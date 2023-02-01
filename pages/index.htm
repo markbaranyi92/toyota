@@ -1,0 +1,19 @@
+<html>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <body>
+      <form action = "http://127.0.0.1:8081/process_post" method = "POST">
+         username: <input type = "text" name = "username"> <br>
+         password: <input type = "text" name = "password"> <br>
+         VIN: <input type = "text" name = "my_vin"> <br>
+         <select name="time_param" required>
+            <option value="0">today</option>
+            <option value="1">last week</option>
+            <option value="2">last month</option>
+            <option value="3">last year</option>
+          </select>
+         <input type = "submit" value = "Submit">
+      </form>
+      
+   </body>
+</html>
