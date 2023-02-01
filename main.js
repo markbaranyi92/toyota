@@ -125,9 +125,9 @@ const get_one_trip = async (tripId) => {
     }
 }
 
-const waitForTrips = async () =>{
+const waitForTrips = async () => {
     await Promise.all(promises_trip);
-}
+};
 
 
 export const Toyota_data = {
@@ -156,25 +156,27 @@ export const Toyota_data = {
                 trip_infos[tripId] = data.statistics;
             }));
         });
-        waitForTrips();
-        console.log(trip_infos);
-        //end of collect data
+        waitForTrips().then(() => {
+            console.log(trip_infos);
+            //end of collect data
+    
+            var averageFuelConsumption = 0.0;
+            var overallFuelConsumption = 0.0;
+            var totalDistanceInKm = 0.0;
+            Object.values(trip_infos).forEach(info => {
+                totalDistanceInKm += info.totalDistanceInKm;
+                averageFuelConsumption += info.averageFuelConsumptionInL*info.totalDistanceInKm;
+                overallFuelConsumption += info.fuelConsumptionInL;
+            })
+            averageFuelConsumption = averageFuelConsumption/totalDistanceInKm;
+    
+            const varToString = varObj => Object.keys(varObj)[0]
+            console.log(varToString({totalDistanceInKm}) + ": " + totalDistanceInKm + " km");
+            console.log(varToString({averageFuelConsumption}) + ": " + averageFuelConsumption + " l/100km");
+            console.log(varToString({overallFuelConsumption}) + ": " + overallFuelConsumption + " l");
+            return body_authenticate;
+        });
 
-        var averageFuelConsumption = 0.0;
-        var overallFuelConsumption = 0.0;
-        var totalDistanceInKm = 0.0;
-        Object.values(trip_infos).forEach(info => {
-            totalDistanceInKm += info.totalDistanceInKm;
-            averageFuelConsumption += info.averageFuelConsumptionInL*info.totalDistanceInKm;
-            overallFuelConsumption += info.fuelConsumptionInL;
-        })
-        averageFuelConsumption = averageFuelConsumption/totalDistanceInKm;
-
-        const varToString = varObj => Object.keys(varObj)[0]
-        console.log(varToString({totalDistanceInKm}) + ": " + totalDistanceInKm + " km");
-        console.log(varToString({averageFuelConsumption}) + ": " + averageFuelConsumption + " l/100km");
-        console.log(varToString({overallFuelConsumption}) + ": " + overallFuelConsumption + " l");
-        return body_authenticate;
     },
 };
 
