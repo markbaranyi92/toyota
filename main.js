@@ -1,9 +1,7 @@
-//todo lint prettier, var-let, fetch and promises alignment, exports, remove getres_auth, http name-> ``
+//todo lint prettier, exports, remove getres_auth, http name-> ``
 //waitfortrips -> no brackets needed, body_authenticate -> actual calculated data and infos.
 //local const usage instead global var
 
-import dotenv from 'dotenv';
-dotenv.config('/.env');
 import { request } from "https";
 import fetch from 'node-fetch';
 
@@ -112,7 +110,7 @@ const get_one_trip = async (params) => {
 }
 
 
-export const Toyota_data = {
+export const toyotaData = {
     uuid: "",
     token:"",
     collect: async (body) => {
@@ -127,16 +125,16 @@ export const Toyota_data = {
         return new Promise((resolve, reject) => {
             post_authenticate(dataAuth).then(value => {
                 const resp_auth = JSON.parse(value);
-                Toyota_data.uuid = resp_auth.customerProfile.uuid;
-                Toyota_data.token = resp_auth.token;
+                toyotaData.uuid = resp_auth.customerProfile.uuid;
+                toyotaData.token = resp_auth.token;
                 //console.log(resp_auth);
-                get_trip_list({uuid: Toyota_data.uuid, vin:body.my_vin, time_param:body.time_param, token:Toyota_data.token}).then(async (data) => {
+                get_trip_list({uuid: toyotaData.uuid, vin:body.my_vin, time_param:body.time_param, token:toyotaData.token}).then(async (data) => {
                         //console.log(data);
                         data.recentTrips.forEach(obj => {
                             tripIds.push(obj.tripId);
                         });
                         tripIds.forEach(tripId => {
-                            tripPromises.push(get_one_trip({tripID: tripId, uuid: Toyota_data.uuid, vin:body.my_vin, token:Toyota_data.token}).then((data) => {
+                            tripPromises.push(get_one_trip({tripID: tripId, uuid: toyotaData.uuid, vin:body.my_vin, token:toyotaData.token}).then((data) => {
                                 tripInfos[tripId] = data.statistics;
                             }).catch(error =>{new Error(`Error during collecting the trip info for ${tripId}`)}));
                         });
@@ -149,4 +147,4 @@ export const Toyota_data = {
     },
 };
 
-export default Toyota_data;
+export default toyotaData;

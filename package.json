@@ -4,7 +4,7 @@
   "description": "Toyota trip info collector to calculate fuel consumption, overall distance and consumption.",
   "main": "main.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node index.js"
   },
   "keywords": [
     "toyota",
@@ -19,7 +19,13 @@
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "helmet": "^6.0.1",
     "multer": "^1.4.5-lts.1",
     "node-fetch": "^3.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.34.0",
+    "eslint-plugin-react": "^7.32.2",
+    "prettier": "2.8.4"
   }
 }
