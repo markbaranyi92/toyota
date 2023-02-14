@@ -24,8 +24,26 @@ app.get('/', function (req, res) {
        my_vin:      req.body.my_vin,
        time_param:  req.body.time_param
     };
-    console.log(response);
-    res.end(JSON.stringify(Toyota_data.collect(response)));
+    //console.log(response);
+    Toyota_data.collect(response).then(tripInfos_ => {
+        console.log(tripInfos_);
+        
+        let averageFuelConsumption = 0.0;
+        let overallFuelConsumption = 0.0;
+        let totalDistanceInKm = 0.0;
+        Object.values(tripInfos_).forEach(info => {
+            totalDistanceInKm += info.totalDistanceInKm;
+            averageFuelConsumption += info.averageFuelConsumptionInL*info.totalDistanceInKm;
+            overallFuelConsumption += info.fuelConsumptionInL;
+        })
+        averageFuelConsumption = averageFuelConsumption/totalDistanceInKm;
+
+        const varToString = varObj => Object.keys(varObj)[0]
+        console.log(varToString({totalDistanceInKm}) + ": " + totalDistanceInKm + " km");
+        console.log(varToString({averageFuelConsumption}) + ": " + averageFuelConsumption + " l/100km");
+        console.log(varToString({overallFuelConsumption}) + ": " + overallFuelConsumption + " l");
+        res.end(JSON.stringify({totalDistanceInKm: totalDistanceInKm, averageFuelConsumption: averageFuelConsumption, overallFuelConsumption: overallFuelConsumption}));
+    }).catch(error =>{new Error('Error during collecting the trip data!')});
  });
 
 const server = app.listen(8081, () => {
