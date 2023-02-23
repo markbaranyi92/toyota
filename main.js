@@ -1,7 +1,3 @@
-//todo lint prettier, exports, remove getres_auth, http name-> ``
-//waitfortrips -> no brackets needed, body_authenticate -> actual calculated data and infos.
-//local const usage instead global var
-
 import { request } from 'https';
 import fetch from 'node-fetch';
 
@@ -116,7 +112,7 @@ export const toyotaData = {
       username: body.username,
       password: body.password,
     };
-    const tripIds = [];
+    //const tripIds = [];
     const tripInfos = [];
     const tripPromises = [];
     return new Promise((resolve, reject) => {
@@ -132,11 +128,14 @@ export const toyotaData = {
             time_param: body.time_param,
             token: toyotaData.token,
           })
-            .then(async (data) => {
-              //console.log(data);
-              data.recentTrips.forEach((obj) => {
-                tripIds.push(obj.tripId);
-              });
+            .then(async (dataTripList) => {
+              const tripIds = dataTripList.recentTrips.map((obj) => obj.tripId);
+              const tripList = dataTripList.recentTrips.reduce((acc, cur) => {
+                acc[cur.tripId] = cur;
+                return acc;
+              }, {});
+              //console.log(tripList);
+              //console.log(tripIds);
               tripIds.forEach((tripId) => {
                 tripPromises.push(
                   get_one_trip({
@@ -145,8 +144,12 @@ export const toyotaData = {
                     vin: body.my_vin,
                     token: toyotaData.token,
                   })
-                    .then((data) => {
-                      tripInfos[tripId] = data.statistics;
+                    .then((dataOneTrip) => {
+                      tripInfos[tripId] = {
+                        tripData: tripList[tripId],
+                        statistics: dataOneTrip.statistics,
+                      };
+                      //console.log(tripInfos[tripId]);
                     })
                     .catch((error) => {
                       new Error(

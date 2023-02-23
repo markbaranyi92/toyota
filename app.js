@@ -7,6 +7,8 @@ const __dirname = dirname(__filename);
 import { toyotaData } from './main.js';
 import helmet from 'helmet';
 
+const varToString = (varObj) => Object.keys(varObj)[0];
+
 export default () => {
   // Create application/x-www-form-urlencoded parser
   const urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -32,14 +34,15 @@ export default () => {
         let overallFuelConsumption = 0.0;
         let totalDistanceInKm = 0.0;
         Object.values(tripInfos_).forEach((info) => {
-          totalDistanceInKm += info.totalDistanceInKm;
+          totalDistanceInKm += info.statistics.totalDistanceInKm;
           averageFuelConsumption +=
-            info.averageFuelConsumptionInL * info.totalDistanceInKm;
-          overallFuelConsumption += info.fuelConsumptionInL;
+            info.statistics.averageFuelConsumptionInL *
+            info.statistics.totalDistanceInKm;
+          overallFuelConsumption += info.statistics.fuelConsumptionInL;
         });
         averageFuelConsumption = averageFuelConsumption / totalDistanceInKm;
 
-        const varToString = (varObj) => Object.keys(varObj)[0];
+        console.log(tripInfos_);
         console.log(
           varToString({ totalDistanceInKm }) + ': ' + totalDistanceInKm + ' km',
         );
