@@ -1,31 +1,22 @@
 {
-  "name": "toyota_trips",
-  "version": "1.0.0",
-  "description": "Toyota trip info collector to calculate fuel consumption, overall distance and consumption.",
-  "main": "main.js",
+  "name": "toyota_app",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "start": "node index.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
-  "keywords": [
-    "toyota",
-    "trip",
-    "fuel"
-  ],
-  "author": "Mark B-T",
-  "license": "ISC",
-  "type": "module",
   "dependencies": {
-    "body-parser": "^1.20.1",
-    "cookie-parser": "^1.4.6",
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "helmet": "^6.0.1",
-    "multer": "^1.4.5-lts.1",
-    "node-fetch": "^3.3.0"
-  },
-  "devDependencies": {
-    "eslint": "^8.34.0",
-    "eslint-plugin-react": "^7.32.2",
-    "prettier": "2.8.4"
+    "@types/node": "18.15.3",
+    "@types/react": "18.0.28",
+    "@types/react-dom": "18.0.11",
+    "eslint": "8.36.0",
+    "eslint-config-next": "13.2.4",
+    "next": "13.2.4",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "4.9.5"
   }
 }
