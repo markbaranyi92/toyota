@@ -112,7 +112,6 @@ export const toyotaData = {
       username: body.username,
       password: body.password,
     };
-    //const tripIds = [];
     const tripInfos = [];
     const tripPromises = [];
     return new Promise((resolve, reject) => {
